@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import AppWithReducers from './AppWithReducers';
 import reportWebVitals from './reportWebVitals';
+import AppWithRedux from './AppWithRedux';
+import {Provider} from 'react-redux';
+import {store} from './store/store';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <AppWithReducers />
-);  
+  <Provider store={store}>
+    <AppWithRedux />
+  </Provider>
+);
 
 reportWebVitals();
