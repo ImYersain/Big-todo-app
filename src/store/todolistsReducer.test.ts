@@ -1,4 +1,4 @@
-import {FilterValuesType, ITodoList} from '../App';
+import {FilterValuesType, ITodoList} from '../AppWithRedux';
 import {
   addTodolistActionCreator,
   changeTodolistFilterActionCreator,

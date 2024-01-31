@@ -1,9 +1,13 @@
 import React, {ChangeEvent} from 'react';
-import {FilterValuesType} from './App';
+import {FilterValuesType} from './AppWithRedux';
 import { AddItemForm } from './components/AddItemForm';
 import { EditableSpan } from './components/EditableSpan';
 import { Box, Button, Checkbox, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { AppRootStateType } from './store/store';
+import { addTaskActionCreator, changeTaskStatusActionCreator, changeTaskTitleActionCreator, removeTaskActionCreator } from './store/tasksReducer';
 
 export interface ITask {
   id: string;
@@ -13,12 +17,7 @@ export interface ITask {
 interface IProps {
   todoListId: string;
   title: string;
-  tasks: ITask[];
-  onDelete: (arg: string, todoListId: string) => void;
-  onAddTask: (arg: string, todoListId: string) => void;
   onChangeFilter: (arg: FilterValuesType, id: string) => void;
-  onChangeTaskStatus: (id: string, isDone: boolean, todoListId: string) => void;
-  onChangeTaskTitle: (id: string, newTitle: string, todoListId: string) => void;
   filterValue: FilterValuesType;
   removeTodolist: (todoListId: string) => void;
   onChangeTodoListTitle: (todoListId: string, newTitle: string) => void;
@@ -27,22 +26,34 @@ interface IProps {
 export const Todolist = ({
   todoListId,
   title,
-  tasks,
-  onDelete,
   onChangeFilter,
-  onAddTask,
-  onChangeTaskStatus,
-  onChangeTaskTitle,
   filterValue,
   removeTodolist,
-  onChangeTodoListTitle
+  onChangeTodoListTitle,
 }: IProps) => {
- 
+  const dispatch = useDispatch();
+  const tasks = useSelector((state: AppRootStateType) => state.tasks[todoListId]);
+
+  const onDeleteTask = (id: string, todoListId: string) => {
+    const action = removeTaskActionCreator(todoListId, id);
+    dispatch(action);
+  };
+
   const addTask = (title: string) => {   //обвертка для функции для того чтобы передвать туда еще айди, так как в  addItemForm функция не принимает атрибут айди
-    onAddTask(title, todoListId);
+    const action = addTaskActionCreator(todoListId, title);
+    dispatch(action);
   };
   const onChangeTodoTitle = (newTitle: string) => {
     onChangeTodoListTitle(newTitle, todoListId)
+  }
+
+  let tasksForTodoList = tasks;
+
+  if (filterValue === 'completed') {
+    tasksForTodoList = tasksForTodoList.filter((item) => item.isDone);
+  }
+  if (filterValue === 'active') {
+    tasksForTodoList = tasksForTodoList.filter((item) => !item.isDone);
   }
 
   return (
@@ -57,10 +68,12 @@ export const Todolist = ({
       <Box style={{padding: '15px 0'}}>
         {tasks.map((item) => {
           const onChangeStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-            onChangeTaskStatus(item.id, e.currentTarget.checked, todoListId);
+            const action = changeTaskStatusActionCreator(todoListId, item.id, e.currentTarget.checked);
+            dispatch(action);
           };
           const onChangeTitleHandler = (newTitle: string) => {
-            onChangeTaskTitle(item.id, newTitle, todoListId);
+            const action = changeTaskTitleActionCreator(todoListId, item.id, newTitle);
+            dispatch(action);
           };
 
           return (
@@ -70,7 +83,7 @@ export const Todolist = ({
                 onChange={onChangeStatusHandler}
               />
               <EditableSpan titleFromState={item.title} onChangeTitle={onChangeTitleHandler} />
-              <IconButton size="small" onClick={() => onDelete(item.id, todoListId)}>
+              <IconButton size="small" onClick={() => onDeleteTask(item.id, todoListId)}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>

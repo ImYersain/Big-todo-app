@@ -1,5 +1,5 @@
 import {v1} from 'uuid';
-import {FilterValuesType, ITodoList} from '../App';
+import {FilterValuesType, ITodoList} from '../AppWithRedux';
 
 export type AddTodolistActionType = {
   type: 'ADD_TODOLIST';
