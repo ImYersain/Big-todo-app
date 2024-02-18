@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, memo, useCallback} from 'react';
 import {FilterValuesType} from './AppWithRedux';
 import { AddItemForm } from './components/AddItemForm';
 import { EditableSpan } from './components/EditableSpan';
@@ -23,7 +23,7 @@ interface IProps {
   onChangeTodoListTitle: (todoListId: string, newTitle: string) => void;
 }
 
-export const Todolist = ({
+export const Todolist = memo(({
   todoListId,
   title,
   onChangeFilter,
@@ -39,13 +39,15 @@ export const Todolist = ({
     dispatch(action);
   };
 
-  const addTask = (title: string) => {   //обвертка для функции для того чтобы передвать туда еще айди, так как в  addItemForm функция не принимает атрибут айди
+  const addTask = useCallback((title: string) => {   //обвертка для функции для того чтобы передвать туда еще айди, так как в  addItemForm функция не принимает атрибут айди
     const action = addTaskActionCreator(todoListId, title);
     dispatch(action);
-  };
+  }, []);
+
   const onChangeTodoTitle = (newTitle: string) => {
     onChangeTodoListTitle(newTitle, todoListId)
   }
+  console.log('todolist is called')
 
   let tasksForTodoList = tasks;
 
@@ -115,4 +117,4 @@ export const Todolist = ({
       </Box>
     </Box>
   );
-};
+});

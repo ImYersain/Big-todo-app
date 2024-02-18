@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from 'react';
+import React, {useCallback, useReducer, useState} from 'react';
 import './App.css';
 import {ITask, Todolist} from './Todolist';
 import {AddItemForm} from './components/AddItemForm';
@@ -28,26 +28,26 @@ function AppWithRedux() {
   const dispatch = useDispatch();
   const {todoLists} = useSelector((state: AppRootStateType) => state);
 
-  const onChangeFilter = (value: FilterValuesType, todoListId: string) => {
+  const onChangeFilter = useCallback((value: FilterValuesType, todoListId: string) => {
     const action = changeTodolistFilterActionCreator(todoListId, value);
     dispatch(action);
-  };
+  }, []);
+  console.log('app is called')
 
-  const removeTodolist = (todoListId: string) => {
+  const removeTodolist = useCallback((todoListId: string) => {
     const action = removeTodolistActionCreator(todoListId);
     dispatch(action);
-  };
+  }, []);
 
-  const onChangeTodoListTitle = (newTitle: string, todoListId: string) => {
+  const onChangeTodoListTitle = useCallback((newTitle: string, todoListId: string) => {
     const action = changeTodolistTitleActionCreator(todoListId, newTitle);
     dispatch(action);
-  };
+  }, []);
 
-  const addTodoList = (title: string) => {
-    debugger;
+  const addTodoList = useCallback((title: string) => {
     const action = addTodolistActionCreator(title);
     dispatch(action);
-  };
+  }, [dispatch]);
 
   if (!todoLists.length) {
     return <h1>Have not any todos ....</h1>;
@@ -73,9 +73,8 @@ function AppWithRedux() {
 
         <Grid container spacing={3}>
           {todoLists.map((todo) => {
-
             return (
-              <Grid item>
+              <Grid item key={todo.id}>
                 <Paper variant={'outlined'} style={{padding: '10px'}}>
                   <Todolist
                     key={todo.id}
