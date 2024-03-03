@@ -1,18 +1,20 @@
-import React, {useReducer, useState} from 'react';
-import './App.css';
-import {ITask, Todolist} from './Todolist';
-import {AddItemForm} from './components/AddItemForm';
-import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import React, {useCallback} from 'react';
+import {useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
+import {AppRootStateType} from './store/store';
 import {
   addTodolistActionCreator,
   changeTodolistFilterActionCreator,
   changeTodolistTitleActionCreator,
   removeTodolistActionCreator,
 } from './store/todolistsReducer';
-import {useDispatch} from 'react-redux';
-import {useSelector} from 'react-redux';
-import {AppRootStateType} from './store/store';
+import {ITask, Todolist} from './Todolist';
+import {AddItemForm} from './components/AddItemForm';
+
+import './App.css';
+import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+
 
 export type FilterValuesType = 'all' | 'completed' | 'active';
 export interface ITodoList {
@@ -28,26 +30,25 @@ function AppWithRedux() {
   const dispatch = useDispatch();
   const {todoLists} = useSelector((state: AppRootStateType) => state);
 
-  const onChangeFilter = (value: FilterValuesType, todoListId: string) => {
+  const onChangeFilter = useCallback((value: FilterValuesType, todoListId: string) => {
     const action = changeTodolistFilterActionCreator(todoListId, value);
     dispatch(action);
-  };
+  }, [dispatch]);
 
-  const removeTodolist = (todoListId: string) => {
+  const removeTodolist = useCallback((todoListId: string) => {
     const action = removeTodolistActionCreator(todoListId);
     dispatch(action);
-  };
+  }, [dispatch]);
 
-  const onChangeTodoListTitle = (newTitle: string, todoListId: string) => {
+  const onChangeTodoListTitle = useCallback((newTitle: string, todoListId: string) => {
     const action = changeTodolistTitleActionCreator(todoListId, newTitle);
     dispatch(action);
-  };
+  }, [dispatch]);
 
-  const addTodoList = (title: string) => {
-    debugger;
+  const addTodoList = useCallback((title: string) => {
     const action = addTodolistActionCreator(title);
     dispatch(action);
-  };
+  }, [dispatch]);
 
   if (!todoLists.length) {
     return <h1>Have not any todos ....</h1>;
@@ -73,9 +74,8 @@ function AppWithRedux() {
 
         <Grid container spacing={3}>
           {todoLists.map((todo) => {
-
             return (
-              <Grid item>
+              <Grid item key={todo.id}>
                 <Paper variant={'outlined'} style={{padding: '10px'}}>
                   <Todolist
                     key={todo.id}
