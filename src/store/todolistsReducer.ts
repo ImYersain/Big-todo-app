@@ -38,18 +38,14 @@ export const todolistsReducer = (state: ITodoList[] = initialState, action: Acti
   switch (action.type) {
     case 'ADD_TODOLIST':
       return [{id: action.newTodolistId, title: action.newTodolistTitle, filter: 'all'}, ...state];
-    case 'CHANGE_TODOLIST_TITLE':
-      let todoList = state.find((todo) => todo.id === action.id);
-      if (todoList) {
-        todoList.title = action.newTitle;
-      }
-      return [...state];
-    case 'CHANGE_TODOLIST_FILTER':
-      let findedTodoList = state.find((todo) => todo.id === action.id);
-      if (findedTodoList) {
-        findedTodoList.filter = action.newFilterValue;
-      }
-      return [...state];
+    case 'CHANGE_TODOLIST_TITLE': {
+      let stateCopy = state.map((todo) => todo.id === action.id ? {...todo, title: action.newTitle} : todo);
+      return stateCopy;
+    }
+    case 'CHANGE_TODOLIST_FILTER': {
+      let stateCopy = state.map((todo) => todo.id === action.id ? {...todo, filter: action.newFilterValue} : todo);
+      return stateCopy;
+    }
     case 'REMOVE_TODOLIST':
       return state.filter((i) => i.id !== action.id);
     default:

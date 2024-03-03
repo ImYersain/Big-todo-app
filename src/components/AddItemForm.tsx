@@ -9,7 +9,6 @@ import React, { KeyboardEvent, useState, memo } from 'react';
   export const AddItemForm = memo(function(props: ItemProps) {
     const [title, setTitle] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
-    console.log('addItemForm was rendered')
 
     const addTask = () => {
       if(title.trim()) {

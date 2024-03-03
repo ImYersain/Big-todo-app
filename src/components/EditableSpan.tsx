@@ -1,11 +1,11 @@
 import { TextField } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, memo, useState } from "react";
 
 interface IEditableSpanProps {
     titleFromState: string;
     onChangeTitle: (newTitle: string) => void;
   }
-  export function EditableSpan(props: IEditableSpanProps) {
+  export const EditableSpan = memo((props: IEditableSpanProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('');
 
@@ -24,4 +24,4 @@ interface IEditableSpanProps {
         <TextField variant={'standard'} onBlur={activateViewMode} value={title} onChange={onChangeTitleHandler} autoFocus size={'small'} />
         : <span onDoubleClick={activateEditMode}>{props.titleFromState}</span>
    )
-  }
+  });
